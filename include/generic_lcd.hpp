@@ -11,22 +11,26 @@
 #define GENERIC_LCD_HPP_
 
 #include <string>
-extern "C" {
-    #include "u8g2_esp32_hal.h"
-}
+
+#include "u8g2_esp32_hal.hpp"
 
 /* class GenericLcd
    driver for an LCD display using u8g2 library and u8g2-hal-esp-idf
    currently only for I2C drivers
    for the SPI drivers an other constructor must be defined
+
+   The I2c master bus and the device registration for the LCD device are done with I2cMaster class
+   before the GenericLcd instance is created.
+   The pointer to the I2cMaster instance and the deviceName of the LCD is needed in the constructor
+   of GenericLcd.
 */
+
 class GenericLcd {
 public:
     // Constructor of I2C LCD
 	GenericLcd(std::string tag,
-	           gpio_num_t sclPin, // i2c scl Pin
-	           gpio_num_t sdaPin, // i2c sda Pin
-	           uint8_t i2cAddress); // i2c address of lcd device
+	           I2CMaster *i2c, // i2c master instance
+	           std:string deviceName); // deviceName of LCD
 	virtual ~GenericLcd();
 	void SetupDone();
 	u8g2_t *GetU8g2Address();
@@ -77,9 +81,8 @@ public:
 
 private:
     std::string tag = "GenericLcd";
-    gpio_num_t sclPin;
-    gpio_num_t sdaPin;
-    uint8_t i2cAddress; // address of the LCD device on theI2C bus
+    I2cMaster *i2c;
+    std::string deviceName;
 
     u8g2_t u8g2;  // a structure which will contain all the data for one display
     u8g2_esp32_hal_t u8g2_esp32_hal; // hardware abstraction layer for u8g2 on ESP32 processors

@@ -10,7 +10,7 @@ and the u8g2-hal-esp-idf component (from https://github.com/mkfrey/u8g2-hal-esp-
 
 It is using the new I2C driver (set CONFIG_I2C_ENABLE_SLAVE_DRIVER_VERSION_2=y in sdkconfig)
 
-Currently only I2C drivers from u8g2 can be used!
+Currently only those drivers from u8g2 using the I2C bus can be used! Drivers using the SPI bus are not yet implemented.
 
 ## Connecting the component
 
@@ -29,7 +29,7 @@ The constructor of class `GenericLcd` has four parameters:
 The API of the component is located in the include directory ```include/generic_lcd.hpp``` and defines the
 C++ class ```GenericLcd```
 
-Currently only I2C drivers from u8g2 can be used!
+Currently only those drivers from u8g2 using the I2C bus can be used! Drivers using the SPI bus are not yet implemented.
 
 ```C++
 /* class GenericLcd

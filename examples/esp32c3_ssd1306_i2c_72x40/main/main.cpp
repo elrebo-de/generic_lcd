@@ -7,6 +7,7 @@
 #include "freertos/task.h"
 
 #include "generic_lcd.hpp"
+#include "i2c_master.hpp"
 
 #include "esp_log.h"
 
@@ -16,20 +17,37 @@ extern "C" void app_main(void)
 {
     ESP_LOGI(tag, "ESP32C3 SSD1306 I2C 72x40 Example Program");
 
-    /* Configure the LCD */
-    GenericLcd myLcd(
-		std::string("ESP32C3 SSD1306 I2C 72x40 LCD"), // tag
+    /* First configure the I2C Master Bus */
+    I2cMaster i2c(
+		std::string("I2C Master Bus"), // tag
+		(i2c_port_num_t) 0, // I2C_MASTER_NUM, // i2cPort
 		(gpio_num_t) 6, // sclPin
-		(gpio_num_t) 5, // sdaPin
-		(uint8_t) 0x78 // i2cAddress
+		(gpio_num_t) 5 // sdaPin
     );
 
+    // then add the LCD device to the I2Cmaster bus
+    i2c_master_dev_handle_t thermometerHandle = i2c.AddDevice(
+        std::string("LCD"), // deviceName
+        (i2c_addr_bit_len_t) I2C_ADDR_BIT_LEN_7, // devAddrLength
+        (uint16_t) 0x78, // deviceAddress
+        (uint32_t) 50000 // sclSpeedHz
+    );
+
+    /* then configure the LCD */
+    GenericLcd myLcd(
+		std::string("ESP32C3 SSD1306 I2C 72x40 LCD"), // tag
+		&i2c, // I2cMaster instance
+		std::string("LCD"), // deviceName of LCD
+    );
+
+    // the setup the u8g2 I2C driver with the callback functions
     u8g2_Setup_ssd1306_i2c_72x40_er_f(
         myLcd.GetU8g2Address(),
         U8G2_R0,
         u8g2_esp32_i2c_byte_cb,
         u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
 
+    // finalize the initialization
     myLcd.SetupDone();
 
     int i = 0;

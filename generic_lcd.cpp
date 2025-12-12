@@ -15,17 +15,19 @@
 
 #include "generic_lcd.hpp"
 
-GenericLcd::GenericLcd(std::string tag, gpio_num_t sclPin, gpio_num_t sdaPin, uint8_t i2cAddress) {
+GenericLcd::GenericLcd(std::string tag,
+                       I2CMaster *i2c, // i2c master instance
+                       std:string "LCD"); // deviceName for LCD
+) {
 	this->tag = tag;
-    this->sclPin = sclPin;
-    this->sdaPin = sdaPin;
-    this->i2cAddress = i2cAddress;
+    this->i2c = i2c;
+    this->deviceName = deviceName;
 
     // u8g2_esp32_hal initialisieren
     this->u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
     this->u8g2_esp32_hal.bus.i2c.sda = this->sdaPin;
     this->u8g2_esp32_hal.bus.i2c.scl = this->sclPin;
-    u8g2_esp32_hal_init(this->u8g2_esp32_hal);
+    u8g2_esp32_hal_init(this->i2c, this->deviceNamel);
 
     this->initialized = false;
 }
