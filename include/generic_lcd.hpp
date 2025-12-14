@@ -11,8 +11,11 @@
 #define GENERIC_LCD_HPP_
 
 #include <string>
+#include "i2c_master.hpp"
 
-#include "u8g2_esp32_hal.hpp"
+extern "C" {
+    #include "u8g2_esp32_hal.h"
+}
 
 /* class GenericLcd
    driver for an LCD display using u8g2 library and u8g2-hal-esp-idf
