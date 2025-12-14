@@ -25,7 +25,7 @@ static i2c_master_dev_handle_t dev_handle_i2c;      // I2C handle.
 #else
 static i2c_cmd_handle_t handle_i2c;      // I2C handle.
 #endif
-static u8g2_esp32_hal_t u8g2_esp32_hal;  // HAL state data.
+static u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;  // HAL state data.
 
 #define HOST    SPI2_HOST
 
@@ -43,6 +43,8 @@ static u8g2_esp32_hal_t u8g2_esp32_hal;  // HAL state data.
  * Initialize the ESP32 HAL.
  */
 void u8g2_esp32_hal_init(I2cMaster *i2c, std::string deviceName) {
+  u8g2_esp32_hal.bus.i2c.sda = U8G2_ESP32_HAL_UNDEFINED;
+  u8g2_esp32_hal.bus.i2c.scl = U8G2_ESP32_HAL_UNDEFINED;
   u8g2_esp32_hal.bus.i2c.i2c = i2c;
   u8g2_esp32_hal.bus.i2c.deviceName = deviceName;
 }  // u8g2_esp32_hal_init
@@ -70,13 +72,22 @@ extern "C" uint8_t u8g2_esp32_spi_byte_cb(u8x8_t* u8x8,
           u8g2_esp32_hal.bus.spi.cs == U8G2_ESP32_HAL_UNDEFINED) {
         break;
       }
-
-      spi_bus_config_t bus_config = {0};
-      bus_config.sclk_io_num = u8g2_esp32_hal.bus.spi.clk;   // CLK
-      bus_config.mosi_io_num = u8g2_esp32_hal.bus.spi.mosi;  // MOSI
-      bus_config.miso_io_num = GPIO_NUM_NC;                  // MISO
-      bus_config.quadwp_io_num = GPIO_NUM_NC;                // Not used
-      bus_config.quadhd_io_num = GPIO_NUM_NC;                // Not used
+      spi_bus_config_t bus_config = {
+          u8g2_esp32_hal.bus.spi.mosi, // mosi_io_num
+          GPIO_NUM_NC, // miso_io_num
+          u8g2_esp32_hal.bus.spi.clk, // sclk_io_num
+          GPIO_NUM_NC, // quadwp_io_num
+          GPIO_NUM_NC, // quadhp_io_num
+          GPIO_NUM_NC, // data4_io_num
+          GPIO_NUM_NC, // data5_io_num
+          GPIO_NUM_NC, // data6_io_num
+          GPIO_NUM_NC, // data7_io_num
+          false, // data_io_default_level
+          0, // max_transfer_sz
+          0, // flags
+          (esp_intr_cpu_affinity_t) 0, // isr_cpu_id
+          0 // intr_flags
+      };
       // ESP_LOGI(TAG, "... Initializing bus.");
       ESP_ERROR_CHECK(spi_bus_initialize(HOST, &bus_config, 1));
 

@@ -16,6 +16,7 @@ extern "C" {
 }
 
 #include "driver/gpio.h"
+#include "i2c_master.hpp"
 
 #if ((defined CONFIG_I2C_ENABLE_SLAVE_DRIVER_VERSION_2 && ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 2, 0)))
 #define U8G2_ESP32_HAL_USE_V2_I2C_API
@@ -56,10 +57,14 @@ typedef struct {
     } spi;
     /* I2C settings. */
     struct {
+      /* GPIO num for I2C data. */
+      gpio_num_t sda;
+      /* GPIO num for I2C clock. */
+      gpio_num_t scl;
       /* I2cMaster instance */
       I2cMaster *i2c;
       /* deviceName */
-      char deviceName[20];
+      std::string deviceName;
     } i2c;
   } bus;
   /* GPIO num for reset. */
@@ -73,9 +78,11 @@ typedef struct {
  */
 #define U8G2_ESP32_HAL_DEFAULT                                        \
   {                                                                   \
-    .bus = {.spi = {.clk = U8G2_ESP32_HAL_UNDEFINED,                  \
-                    .mosi = U8G2_ESP32_HAL_UNDEFINED,                 \
-                    .cs = U8G2_ESP32_HAL_UNDEFINED}},                 \
+    .bus = {.i2c = {.sda = U8G2_ESP32_HAL_UNDEFINED,                  \
+                    .scl = U8G2_ESP32_HAL_UNDEFINED,                  \
+                    .i2c = nullptr,                  \
+                    .deviceName = ""}           \
+            },                                                        \
     .reset = U8G2_ESP32_HAL_UNDEFINED, .dc = U8G2_ESP32_HAL_UNDEFINED \
   }
 

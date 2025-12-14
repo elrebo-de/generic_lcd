@@ -16,8 +16,8 @@
 #include "generic_lcd.hpp"
 
 GenericLcd::GenericLcd(std::string tag,
-                       I2CMaster *i2c, // i2c master instance
-                       std:string "LCD"); // deviceName for LCD
+                       I2cMaster *i2c, // i2c master instance
+                       std::string("LCD") // deviceName for LCD
 ) {
 	this->tag = tag;
     this->i2c = i2c;
@@ -27,7 +27,7 @@ GenericLcd::GenericLcd(std::string tag,
     this->u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
     this->u8g2_esp32_hal.bus.i2c.sda = this->sdaPin;
     this->u8g2_esp32_hal.bus.i2c.scl = this->sclPin;
-    u8g2_esp32_hal_init(this->i2c, this->deviceNamel);
+    u8g2_esp32_hal_init(this->i2c, this->deviceName);
 
     this->initialized = false;
 }
@@ -41,8 +41,6 @@ GenericLcd::~GenericLcd() {
 }
 
 void GenericLcd::SetupDone() {
-	u8x8_SetI2CAddress(&(this->u8g2.u8x8), this->i2cAddress);
-
     ESP_LOGD(this->tag.c_str(), "u8g2_InitDisplay");
     u8g2_InitDisplay(&(this->u8g2));  // send init sequence to the display, display is in sleep mode after this call
 

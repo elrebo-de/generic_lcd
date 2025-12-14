@@ -26,12 +26,15 @@ extern "C" void app_main(void)
     );
 
     // then add the LCD device to the I2Cmaster bus
-    i2c_master_dev_handle_t thermometerHandle = i2c.AddDevice(
+    I2cDevice lcdDevice(
+        std::string("LCD Device"), // tag
         std::string("LCD"), // deviceName
         (i2c_addr_bit_len_t) I2C_ADDR_BIT_LEN_7, // devAddrLength
-        (uint16_t) 0x78, // deviceAddress
+        (uint16_t) I2C_DEVICE_ADDRESS_NOT_USED, // deviceAddress
         (uint32_t) 50000 // sclSpeedHz
-    );
+        );
+
+    i2c_master_dev_handle_t thermometerHandle = i2c.AddDevice(&lcdDevice);
 
     /* then configure the LCD */
     GenericLcd myLcd(
@@ -46,6 +49,8 @@ extern "C" void app_main(void)
         U8G2_R0,
         u8g2_esp32_i2c_byte_cb,
         u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
+
+	u8x8_SetI2CAddress(&(myLcd.GetU8g2Address()->u8x8), lcdDevice.GetConfig().deviceAddress);
 
     // finalize the initialization
     myLcd.SetupDone();

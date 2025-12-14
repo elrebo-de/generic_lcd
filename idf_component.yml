@@ -15,3 +15,5 @@ dependencies:
   u8g2-hal-esp-idf:
     git: https://github.com/mkfrey/u8g2-hal-esp-idf.git
     version: refs/pull/22/head
+  elrebo-de/i2c_master:
+    git: https://github.com/elrebo-de/i2c_master.git
