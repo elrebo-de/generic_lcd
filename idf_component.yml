@@ -1,4 +1,4 @@
-version: "1.0.0"
+version: "1.0.1"
 license: "Apache 2.0"
 description: "Generic LCD component for ESP-IDF version 5.5.0+ using a C++ class and u8g2 library of olikraus and u8g2-hal-esp-idf of mkfrey"
 url: "https://github.com/elrebo-de/generic_lcd"
