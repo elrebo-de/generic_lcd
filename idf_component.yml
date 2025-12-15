@@ -12,8 +12,8 @@ dependencies:
   idf: ">=5.5.0"
   u8g2:
     git: https://github.com/olikraus/u8g2.git
-  u8g2-hal-esp-idf:
-    git: https://github.com/mkfrey/u8g2-hal-esp-idf.git
-    version: refs/pull/22/head
+#  u8g2-hal-esp-idf:
+#    git: https://github.com/mkfrey/u8g2-hal-esp-idf.git
+#    version: refs/pull/22/head
   elrebo-de/i2c_master:
     git: https://github.com/elrebo-de/i2c_master.git
