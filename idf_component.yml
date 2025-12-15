@@ -1,4 +1,4 @@
-version: "1.0.1"
+version: "1.0.2"
 license: "Apache 2.0"
 description: "Generic LCD component for ESP-IDF version 5.5.0+ using a C++ class and u8g2 library of olikraus and u8g2-hal-esp-idf of mkfrey"
 url: "https://github.com/elrebo-de/generic_lcd"
@@ -12,9 +12,9 @@ dependencies:
   idf: ">=5.5.0"
   u8g2:
     git: https://github.com/olikraus/u8g2.git
-#  u8g2-hal-esp-idf:
-#    git: https://github.com/mkfrey/u8g2-hal-esp-idf.git
-#    version: refs/pull/22/head
+  #u8g2-hal-esp-idf:
+  #  git: https://github.com/mkfrey/u8g2-hal-esp-idf.git
+  #  version: refs/pull/22/head
   elrebo-de/i2c_master:
     git: https://github.com/elrebo-de/i2c_master.git
-    version: 1.0.1
+    version: 1.0.2
