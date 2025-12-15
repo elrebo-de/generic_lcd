@@ -3,6 +3,7 @@ dependencies:
   idf: '>=5.5.0'
   elrebo-de/i2c_master:
     git: https://github.com/elrebo-de/i2c_master.git
+    version: 1.0.1
   elrebo-de/generic_lcd:
     version: "1.0.0"
     override_path: '../../../' # three levels up, pointing to the directory with the component itself

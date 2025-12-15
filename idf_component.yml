@@ -17,3 +17,4 @@ dependencies:
 #    version: refs/pull/22/head
   elrebo-de/i2c_master:
     git: https://github.com/elrebo-de/i2c_master.git
+    version: 1.0.1
