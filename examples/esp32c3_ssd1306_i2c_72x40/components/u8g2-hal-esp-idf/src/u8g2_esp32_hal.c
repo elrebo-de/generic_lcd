@@ -40,7 +40,7 @@ static u8g2_esp32_hal_t u8g2_esp32_hal;  // HAL state data.
   } while (0);
 
 /*
- * Initialze the ESP32 HAL.
+ * Initialize the ESP32 HAL.
  */
 void u8g2_esp32_hal_init(u8g2_esp32_hal_t u8g2_esp32_hal_param) {
   u8g2_esp32_hal = u8g2_esp32_hal_param;
@@ -59,7 +59,7 @@ uint8_t u8g2_esp32_spi_byte_cb(u8x8_t* u8x8,
                                uint8_t msg,
                                uint8_t arg_int,
                                void* arg_ptr) {
-  ESP_LOGD(TAG, "spi_byte_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p",
+  ESP_LOGI(TAG, "spi_byte_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p",
            msg, arg_int, arg_ptr);
   switch (msg) {
     case U8X8_MSG_BYTE_SET_DC:
@@ -130,7 +130,7 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
                                uint8_t msg,
                                uint8_t arg_int,
                                void* arg_ptr) {
-  ESP_LOGD(TAG, "i2c_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p", msg,
+  ESP_LOGI(TAG, "i2c_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p", msg,
            arg_int, arg_ptr);
 
   switch (msg) {
@@ -151,36 +151,38 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
       uint8_t i2c_address = 0;
 
       if (bus_handle_i2c == 0) {
-      i2c_master_bus_config_t bus_conf_i2c = {
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .glitch_ignore_cnt = 7,
-        .i2c_port = I2C_MASTER_NUM,
-        .scl_io_num = u8g2_esp32_hal.bus.i2c.scl,
-        .sda_io_num = u8g2_esp32_hal.bus.i2c.sda,
-        .flags.enable_internal_pullup = true,
-      };
-      ESP_LOGI(TAG, "sda_io_num %d", u8g2_esp32_hal.bus.i2c.sda);
-      ESP_LOGI(TAG, "scl_io_num %d", u8g2_esp32_hal.bus.i2c.scl);
-      ESP_LOGI(TAG, "i2c_port %d", I2C_MASTER_NUM);
+          i2c_master_bus_config_t bus_conf_i2c = {
+            .clk_source = I2C_CLK_SRC_DEFAULT,
+            .glitch_ignore_cnt = 7,
+            .i2c_port = I2C_MASTER_NUM,
+            .scl_io_num = u8g2_esp32_hal.bus.i2c.scl,
+            .sda_io_num = u8g2_esp32_hal.bus.i2c.sda,
+            .flags.enable_internal_pullup = true,
+          };
+          ESP_LOGI(TAG, "sda_io_num %d", u8g2_esp32_hal.bus.i2c.sda);
+          ESP_LOGI(TAG, "scl_io_num %d", u8g2_esp32_hal.bus.i2c.scl);
+          ESP_LOGI(TAG, "i2c_port %d", I2C_MASTER_NUM);
 
-      i2c_address = u8x8_GetI2CAddress(u8x8);
-      ESP_ERROR_CHECK(i2c_new_master_bus(&bus_conf_i2c, &bus_handle_i2c));
+          i2c_address = u8x8_GetI2CAddress(u8x8);
+          ESP_LOGI(TAG, "u8x8_GetI2cAddress(u8x8): %u", i2c_address);
+
+          ESP_ERROR_CHECK(i2c_new_master_bus(&bus_conf_i2c, &bus_handle_i2c));
       }
 
       if (dev_handle_i2c == 0) {
-      i2c_device_config_t dev_conf_i2c = {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        // Bit shift by one to make it consistant with the old API
-        // which requires takes an address with the LSB (leftmost) bit being
-        // the read/write bit versus the new one which only takes the address
-        // unshifted
-        .device_address = i2c_address >> 1,
-        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
-      };
-      ESP_LOGI(TAG, "i2c_device_address 0x%02X", i2c_address >> 1);
-      ESP_LOGI(TAG, "clk_speed %d", I2C_MASTER_FREQ_HZ);
+          i2c_device_config_t dev_conf_i2c = {
+            .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+            // Bit shift by one to make it consistant with the old API
+            // which requires takes an address with the LSB (leftmost) bit being
+            // the read/write bit versus the new one which only takes the address
+            // unshifted
+            .device_address = i2c_address >> 1,
+            .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+          };
+          ESP_LOGI(TAG, "i2c_device_address 0x%02X", i2c_address >> 1);
+          ESP_LOGI(TAG, "clk_speed %d", I2C_MASTER_FREQ_HZ);
 
-      ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_i2c, &dev_conf_i2c, &dev_handle_i2c));
+          ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_i2c, &dev_conf_i2c, &dev_handle_i2c));
       }
 #else
       i2c_config_t conf = {0};
@@ -235,12 +237,12 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
 
     case U8X8_MSG_BYTE_START_TRANSFER: {
 #ifdef U8G2_ESP32_HAL_USE_V2_I2C_API
-      ESP_LOGD(TAG, "Start I2C transfer to %02X.", u8x8_GetI2CAddress(u8x8) >> 1);
+      ESP_LOGI(TAG, "Start I2C transfer to %02X.", u8x8_GetI2CAddress(u8x8) >> 1);
       i2c_bytes_buffer_ptr = i2c_bytes_buffer;
 #else
       uint8_t i2c_address = u8x8_GetI2CAddress(u8x8);
       handle_i2c = i2c_cmd_link_create();
-      ESP_LOGD(TAG, "Start I2C transfer to %02X.", i2c_address >> 1);
+      ESP_LOGI(TAG, "Start I2C transfer to %02X.", i2c_address >> 1);
       ESP_ERROR_CHECK(i2c_master_start(handle_i2c));
       ESP_ERROR_CHECK(i2c_master_write_byte(
           handle_i2c, i2c_address | I2C_MASTER_WRITE, ACK_CHECK_EN));
@@ -250,10 +252,10 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t* u8x8,
 
     case U8X8_MSG_BYTE_END_TRANSFER: {
 #ifdef U8G2_ESP32_HAL_USE_V2_I2C_API
-      ESP_LOGD(TAG, "End I2C transfer.");
+      ESP_LOGI(TAG, "End I2C transfer.");
       ESP_ERROR_CHECK(i2c_master_transmit(dev_handle_i2c, i2c_bytes_buffer,i2c_bytes_buffer_ptr - i2c_bytes_buffer,I2C_TIMEOUT_MS));
 #else
-      ESP_LOGD(TAG, "End I2C transfer.");
+      ESP_LOGI(TAG, "End I2C transfer.");
       ESP_ERROR_CHECK(i2c_master_stop(handle_i2c));
       ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_MASTER_NUM, handle_i2c,
                                            pdMS_TO_TICKS(I2C_TIMEOUT_MS)));
@@ -273,7 +275,7 @@ uint8_t u8g2_esp32_gpio_and_delay_cb(u8x8_t* u8x8,
                                      uint8_t msg,
                                      uint8_t arg_int,
                                      void* arg_ptr) {
-  ESP_LOGD(TAG,
+  ESP_LOGI(TAG,
            "gpio_and_delay_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p",
            msg, arg_int, arg_ptr);
 

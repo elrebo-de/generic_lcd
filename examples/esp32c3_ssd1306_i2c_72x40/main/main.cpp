@@ -66,18 +66,18 @@ extern "C" void app_main(void)
         if(myLcd.IsInitialized()) {
             myLcd.SetPowerSave(0);  // wake up display
             myLcd.ClearBuffer();
-            //myLcd.DrawFrame(0, 0, 72, 40);
+            myLcd.DrawFrame(0, 0, 72, 40);
 
-            //myLcd.SetFont(u8g2_font_resoledmedium_tr);
-            //myLcd.DrawStr(2, 9, "running for");
+            myLcd.SetFont(u8g2_font_resoledmedium_tr);
+            myLcd.DrawStr(2, 9, "running for");
 
-            //sprintf(buffer, "%3i", i / 60);
-            //myLcd.DrawStr(2, 18, (std::string(buffer) + std::string(" min.")).c_str());
-            //sprintf(buffer, "%3i", i % 60);
-            //myLcd.DrawStr(2, 27, (std::string(buffer) + std::string(" sec.!")).c_str());
+            sprintf(buffer, "%3i", i / 60);
+            myLcd.DrawStr(2, 18, (std::string(buffer) + std::string(" min.")).c_str());
+            sprintf(buffer, "%3i", i % 60);
+            myLcd.DrawStr(2, 27, (std::string(buffer) + std::string(" sec.!")).c_str());
 
-            //myLcd.DrawBox(6, 30, i % 60, 6);
-            //myLcd.DrawFrame(6, 30, 60, 6);
+            myLcd.DrawBox(6, 30, i % 60, 6);
+            myLcd.DrawFrame(6, 30, 60, 6);
 
             myLcd.SendBuffer();
 
