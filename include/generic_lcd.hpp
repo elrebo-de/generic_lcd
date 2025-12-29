@@ -30,10 +30,10 @@ extern "C" {
 
 class GenericLcd {
 public:
-    // Constructor of I2C LCD
+    // Constructor of I2C LCD V2
 	GenericLcd(std::string tag,
 	           I2cMaster *i2c, // i2c master instance
-	           std::string deviceName); // deviceName of LCD
+	           I2cDevice *i2cDevice); // i2c device for LCD
 	virtual ~GenericLcd();
 	void SetupDone();
 	u8g2_t *GetU8g2Address();
@@ -85,7 +85,7 @@ public:
 private:
     std::string tag = "GenericLcd";
     I2cMaster *i2c;
-    std::string deviceName;
+    I2cDevice *i2cDevice;
 
     u8g2_t u8g2;  // a structure which will contain all the data for one display
     u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT; // hardware abstraction layer for u8g2 on ESP32 processors

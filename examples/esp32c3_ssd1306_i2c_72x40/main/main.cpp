@@ -30,17 +30,17 @@ extern "C" void app_main(void)
         std::string("LCD Device"), // tag
         std::string("LCD"), // deviceName
         (i2c_addr_bit_len_t) I2C_ADDR_BIT_LEN_7, // devAddrLength
-        (uint16_t) 0x78 >> 1, // deviceAddress (without R/W bit)
+        (uint16_t) 0x3c, // deviceAddress (without R/W bit)
         (uint32_t) 50000 // sclSpeedHz
         );
 
-    i2c_master_dev_handle_t lcdHandle = i2c.AddDevice(&lcdDevice);
+    i2c.AddDevice(&lcdDevice);
 
     /* then configure the LCD */
     GenericLcd myLcd(
 		std::string("ESP32C3 SSD1306 I2C 72x40 LCD"), // tag
 		&i2c, // I2cMaster instance
-		std::string("LCD") // deviceName of LCD
+		&lcdDevice // i2c device for LCD
     );
 
     // the setup the u8g2 I2C driver with the callback functions
@@ -50,7 +50,7 @@ extern "C" void app_main(void)
         u8g2_esp32_i2c_byte_cb,
         u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
 
-	u8x8_SetI2CAddress(&(myLcd.GetU8g2Address()->u8x8), lcdDevice.GetConfig().device_address << 1);
+	//u8x8_SetI2CAddress(&(myLcd.GetU8g2Address()->u8x8), lcdDevice.GetConfig().device_address << 1);
 
     // finalize the initialization
     myLcd.SetupDone();
