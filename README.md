@@ -45,7 +45,7 @@ public:
 	           gpio_num_t sdaPin, // i2c sda Pin
 	           uint8_t i2cAddress); // i2c address of lcd device
 	virtual ~GenericLcd();
-	void SetupDone();
+	void Begin();
 	u8g2_t *GetU8g2Address();
 	bool IsInitialized();
 

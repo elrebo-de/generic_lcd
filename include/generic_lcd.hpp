@@ -1,7 +1,6 @@
 /*
  * generic_lcd.hpp
  *
- *  Created on: 07.12.2025
  *      Author: christophoberle
  *
  * this work is licenced under the Apache 2.0 licence
@@ -11,33 +10,71 @@
 #define GENERIC_LCD_HPP_
 
 #include <string>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #include "i2c_master.hpp"
 
-extern "C" {
-    #include "u8g2_esp32_hal.h"
-}
+#include "esp_log.h"
+
+#include "u8g2.h"
+#include "u8g2_hal_espidf.hpp"
+
+/* class U8g2_Hal:I2C
+   Subclass of u8g2_hal::U8g2_Hal_I2C
+   this subclass uses an already connected i2c device
+*/
+
+class XU8g2_Hal_I2C : public u8g2_hal::U8g2_Hal_I2C {
+    /// @brief The second step of initializing the HAL
+    /// @note needs to be done at runtime. The first step is the constructor.
+    /// @param deviceHandle This must be already initialized and added to the bus!
+    public:
+        XU8g2_Hal_I2C() : u8g2_hal::U8g2_Hal_I2C(1000, 32, {})
+        {
+        }
+
+        esp_err_t Begin(i2c_master_dev_handle_t devHandle)
+        {
+          m_hDisp = devHandle;
+          return ESP_OK;
+        }
+};
 
 /* class GenericLcd
    driver for an LCD display using u8g2 library and u8g2-hal-esp-idf
    currently only for I2C drivers
    for the SPI drivers an other constructor must be defined
 
-   The I2c master bus and the device registration for the LCD device are done with I2cMaster class
+   The I2c master device handle is registered with I2cMaster class
    before the GenericLcd instance is created.
-   The pointer to the I2cMaster instance and the deviceName of the LCD is needed in the constructor
+   The pointer to the I2cMaster and I2CDevice instances are needed in the constructor
    of GenericLcd.
 */
-
 class GenericLcd {
 public:
     // Constructor of I2C LCD V2
 	GenericLcd(std::string tag,
-	           I2cMaster *i2c, // i2c master instance
+	           I2cMaster *i2cMaster, // i2c master instance
 	           I2cDevice *i2cDevice); // i2c device for LCD
 	virtual ~GenericLcd();
-	void SetupDone();
+	void Begin();
 	u8g2_t *GetU8g2Address();
 	bool IsInitialized();
+
+    /// @note I attempted to use C++ lambda and std::bind but
+    ///   failed to convert it into plain C function pointer,
+    ///   so this boilerplate is the last resort.
+    uint8_t CommCb(u8x8_t *a, uint8_t b, uint8_t c, void *d)
+    {
+      //vTaskDelay(pdMS_TO_TICKS(10));
+      return u8g2hal.i2c_byte_cb(a, b, c, d);
+    }
+    uint8_t GpioCb(u8x8_t *a, uint8_t b, uint8_t c, void *d)
+    {
+      //vTaskDelay(pdMS_TO_TICKS(10));
+      return u8g2hal.gpio_and_delay_cb(a, b, c, d);
+    }
 
 	/* u8g2 function wrappers
 	   with:
@@ -84,11 +121,11 @@ public:
 
 private:
     std::string tag = "GenericLcd";
-    I2cMaster *i2c;
+    I2cMaster *i2cMaster;
     I2cDevice *i2cDevice;
 
     u8g2_t u8g2;  // a structure which will contain all the data for one display
-    u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT; // hardware abstraction layer for u8g2 on ESP32 processors
+    XU8g2_Hal_I2C u8g2hal;
 
     bool initialized;
 };
