@@ -1,13 +1,11 @@
-version: 1.1.0
+version: 1.1.1
 dependencies:
   idf: '>=5.5.0'
   u8g2:
     git: https://github.com/olikraus/u8g2.git
   u8g2_hal_espidf:
     git: https://github.com/lkmuk/u8g2_hal_espidf.git
-  elrebo-de/i2c_master:
-    git: https://github.com/elrebo-de/i2c_master.git
-    version: 1.1.0
+  elrebo-de/i2c_master: ~1.1.2
   elrebo-de/generic_lcd:
-    version: "1.1.0"
+    version: "1.1.1"
     override_path: '../../../' # three levels up, pointing to the directory with the component itself
